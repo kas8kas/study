@@ -3,15 +3,15 @@
 
 class CConst
 {
-	CConst():m_iConst2(0),m_iConst3(99),m_iNotConst(10) //1번 방법
+	CConst():m_iConst2(0),m_iConst3(99),m_iNotConst(10) 	//1번 방법
 	{
-		//m_iConst2 = 0; 불가능, 상수의 대입이기 때문에.
+		m_iConst2 = 0; //불가능, 상수의 대입이기 때문에.
 	}
 private:
-  const int m_iConst1 = 0;             //2번 방법
-  const int m_iConst2;
-  const int m_iConst3;
-  int m_iNotConst;
+	  const int m_iConst1 = 0;          			//2번 방법
+	  const int m_iConst2;
+	  const int m_iConst3;
+	  int m_iNotConst;
 };
 ```
 - 생성자 이름 뒤 쌍점으로 초기화 가능
@@ -21,10 +21,35 @@ private:
 - 2번 방법은 지양. 초기화 위치가 헤더 파일이면 헷갈림. 옛 버전에서는 불가한 형식이기도 함.
 ***
 # const 멤버 함수
-***
-### 함수 오버로딩
 ```c++
+class CConst
+{
+public:
+	void Test(){}
+	void Render() const		//const 멤버 함수 기본형
+	{
+		m_iConst = 1;		//불가능
+		m_iNotConst = 1;	//불가능
+		Test();			//불가능
+	}
+	const int* GetPtr () const
+	{
+		return ptr;
+	}
+private:
+	const int m_iConst;
+	int m_iNotConst;
+	int* ptr = new int(0);
+};
 
+```
+- 멤버 함수 내부에서 멤버 변수값을 변경하지 못 한다. (멤버 변수의 상수화)
+- 멤버 함수 내부에서 멤버 함수 호출도 불가하다. 호출한 멤버 함수 내부에서 값이 변경될 수 있으므로. (같은 const 멤버 함수는 호출 가능)
+- 지역변수는 변경 가능.
+- 보통 포인터 또는 래퍼런스 값을 리턴할 때 사용한다. 원본값에 접근하여 조작하지 못 하도록 하기 위해. (일반적인 변수를 다루는 함수에서는 굳이?)
+***
+### const 멤버 함수 오버로딩
+```c++
 class CConst1
 {
 public:
@@ -32,9 +57,9 @@ public:
 	{
 		cout << m_iA << endl;
 	}
-	void Render() const // const 키워드로 함수 오버로딩 가능, 근데 헷갈림. 쓰지 말자 딱히
+	void Render() const
 	{
-		cout << "ㅇㅇ" << endl;
+		cout << "const 오버로딩" << endl;
 	}
 private:
 	int m_iA = 9;
@@ -61,3 +86,4 @@ int main()
 	return 0;
 }
 ```
+- const 객체로 생성을 해야 const 함수 오버로딩이 호출된다.
