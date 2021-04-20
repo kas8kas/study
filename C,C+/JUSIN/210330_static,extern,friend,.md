@@ -65,20 +65,19 @@ int main()
 ```c++
 class CHuman
 {
-friend
-int m_iMoney = 1000;
+	friend CBoss;
+ int m_iMoney = 1000;
 };
 
 class CBoss
 {
-int m_iMoney = 1000;
-void GetMoney(CBoss& boss)
-{
-this->m_iMoney += boss.m_iMoney;
-m_iMoney = 0;
-}
+ int m_iMoney = 1000;
+ void GetMoney(CBoss& boss)
+ {
+  this->m_iMoney += boss.m_iMoney;
+  m_iMoney = 0;
+ }
 };
-
 ```
 - c++에서 지원하는 기능이다.
 - 접근 지정자를 무시하게 만들 수 있다. 무분별한 사용을 지양해야 하는 무서운 키워드... 객체 지향 정보 은닉성을 위배...
