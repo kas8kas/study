@@ -1,0 +1,92 @@
+# key manager
+- 키를 눌렀을 경우, 띠었을 경우, 누르고 있을 경우 3가지로 나누어 체크한다.
+- 비트 연산자를 이용한다.
+- 필요 헤더 #include <Windows.h>
+***
+```
+//0000	0001
+#define KEY_LBUTTON 0x0001
+//0000	0010
+#define KEY_RBUTTON 0x0002
+//0000	0100
+#define KEY_LEFT	0x0004
+//0000	1000
+#define KEY_RIGHT	0x0008
+//0001	0000
+#define KEY_UP		0x0010
+//0010	0000
+#define KEY_DOWN	0x0020
+```
+- 비트 연산자 활용을 위한 매크로 상수 선언
+***
+```
+	void Update_Key_Manager()
+	{
+		m_dwKey = 0;
+		if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+			m_dwKey |= KEY_LBUTTON;
+		if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+			m_dwKey |= KEY_RBUTTON;
+		if (GetAsyncKeyState(VK_UP) & 0x8000)
+			m_dwKey |= KEY_UP;
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+			m_dwKey |= KEY_DOWN;
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+			m_dwKey |= KEY_LEFT;
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+			m_dwKey |= KEY_RIGHT;
+	}
+```
+- 키 입력 체크, 업데이트 부분
+- GetAsyncKeyState()함수는 인자로 들어온 키값에 입력 형태를 반환한다.
+- 0x0000 (0) : 이전에 누른 적 없고, 호출 시점에서 안 눌린 상태
+- 0x8000     : 이전에 누른 적 없고, 호출 시점에서 눌린 상태
+- 0x8001     : 이전에 누른 적 있고, 호출 시점에서 눌린 상태
+- 0x0001 (1) : 이전에 누른 적 있고, 호출 시점에서 안 눌린 상태
+***
+```
+	bool Key_Up(DWORD dwKey)
+	{
+		//같으면 저장
+		if (m_dwKey & dwKey)
+		{
+			m_dwKeyUP |= dwKey;
+			return false;
+		}
+		//저장값이 같으면
+		else if (m_dwKeyUP & dwKey)
+		{
+			m_dwKeyUP ^= dwKey;
+			return true;
+		}
+		return false;
+	}
+
+	bool Key_Down(DWORD dwKey)
+	{
+		//0000 0000
+		//0000 0001
+		//0000 0000 
+		//똑같고, 누른적 없으면 -> 눌렀다면
+		if ((m_dwKey & dwKey) && !(m_dwKeyDown & dwKey))
+		{
+			m_dwKeyDown |= dwKey;
+			return true;
+		}
+		//안 똑같고, 누른적 있으면 -> 손을 들었다면 -> 초기화
+		else if (!(m_dwKey & dwKey) && (m_dwKeyDown & dwKey))
+		{
+			m_dwKeyDown ^= dwKey;
+			return false;
+		}
+		return false;
+	}
+
+	bool Key_Pressing(DWORD dwKey)
+	{
+		if (m_dwKey & dwKey)
+			return true;
+		return false;
+	}
+```
+- 확인 할 키값이 각각 함수에 맞게 적용될 때 true 반환
