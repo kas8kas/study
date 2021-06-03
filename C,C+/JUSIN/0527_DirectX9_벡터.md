@@ -65,10 +65,29 @@
 //앵글값으로(라디안) 움직이기
 	vec1.x += cosf(fAngle) * m_fSpeed;
 	vec1.y += sinf(fAngle) * m_fSpeed;
-//라디안->각도, D3DXToRadian(fAngle), fAngle * 파이 / 180
+//각도->라디안, D3DXToRadian(degree), ((degree) * (D3DX_PI / 180.0f))
+//라디안->각도, D3DXToDegree(radian), ((radian) * (180.0f / D3DX_PI))
 ```
 ***
 ### 회전횡렬 공식
 - 회전된 q위칙 주소 공식
-- qX = pX * cos@ - pY * sin@
-- qY = pX * sin@ + pY * cos@
+- Q.x = P.X * cos@ - P.Y * sin@ 
+- Q.y = P.X * sin@ + P.Y * cos@
+```
+//벡터 멤버 변수(사각형의 모서리)
+	D3DXVECTOR3 m_vP[4]; // 기준이 되는 점. 
+	D3DXVECTOR3 m_vQ[4]; // 애는 일정 @만큼 돌렸을 때 나오는 결과값을 보관할 변수. 
+//업데이트 함수
+	for(int i = 0; i < 4; i++)
+	{
+ 		m_vQ[i].x = m_vP[i].x * cosf(D3DXToRadian(m_fAngle)) - m_vP[i].y * -sinf(D3DXToRadian(m_fAngle)); 
+ 		m_vQ[i].y = m_vP[i].x * -sinf(D3DXToRadian(m_fAngle)) + m_vP[i].y * cosf(D3DXToRadian(m_fAngle));
+		//아래는 초기 위치값 세팅
+		m_vQ[i] += m_tInfo.vPos;
+	}
+//랜더 함수
+	MoveToEx(hDC, m_vQ[0].x, m_vQ[0].y, nullptr); 
+	for (int i = 1; i < 4; ++i)
+		LineTo(hDC, m_vQ[i].x, m_vQ[i].y); 
+	LineTo(hDC, m_vQ[0].x, m_vQ[0].y); 
+```
