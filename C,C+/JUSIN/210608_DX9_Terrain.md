@@ -62,7 +62,12 @@ typedef struct tagTile
 ***
 ### 타일 삭제
 - 동적 할당으로 생성한 타일 객체를 삭제해준다.
-- 메모리 누수 조심
 ```
-	
+	for(TILE*& pTile : m_vecTile)
+	{
+	delete pTile;
+	pTile = nullptr;
+	}
+	m_vecTile.clear();
+	m_vecTile.shrink_to_fit();
 ```
