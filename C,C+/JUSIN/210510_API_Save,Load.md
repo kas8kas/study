@@ -23,7 +23,36 @@ void CLine_Manager::SaveData_Line_Manager()
 - CreateFile() 함수로 파일을 생성합니다. (GENERIC_WRITE -> 쓰기 권한 부여 후, CREATE_ALWAYS -> 중복 시 덮어씌우기)
 - int MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType);
 - MessageBox(핸들값,출력메세지,출력타이틀,박스옵션) -> 박스옵션으로 여러 버튼을 호출할 수 있음. 그리고 버튼에 따른 리턴값을 가지고 있음.
-- WriteFile() 함수로 원하는 데이터를 저장한다. -> dwByte 항목 인자는 기록한 데이터 바이트의 수를 리턴받고 함수가 호출되었을 때 0으로 초기화됨.
+### WriteFile 함수
+```
+BOOL WriteFile(
+    HANDLE hFile,
+    LPVOID lpBuffer,
+    DWORD nNumberOfBytesToWrite,
+    LPDWORD lpNumberOfBytesWritten,
+    LPOVERLAPPED lpOverlapped);
+    
+hFile
+파일이나 I/O 장치의 핸들입니다.
+반드시 쓰기 권한이 있어야 합니다.
+비동기식 쓰기 작업을 하려면 CreateFile 함수를 사용해서 FILE_FLAG_OVERLAPPED 플래그를 지정하거나 socket 함수나 accept 함수를 사용해서 받아온 핸들이어야 합니다.
+
+lpBuffer
+파일이나 장치에 기록할 데이터를 가지고 있는 버퍼의 포인터입니다.
+
+nNumberOfBytesToWrite
+기록할 데이터의 길이입니다.
+
+lpNumberOfBytesWritten
+기록한 데이터 바이트의 수를 리턴받는 인수입니다.
+이 인수는 함수가 호출되었을 때 0으로 초기화됩니다.
+lpOverlapped 인수가 NULL 값을 가지지 않으면 이 인수를 NULL로 지정해야 합니다.
+
+lpOverlapped
+비동기 입출력을 위한 OVERLAPPED 구조체의 포인터입니다.
+만약 파일을 FILE_FLAG_OVERLAPPED 플래그를 지정해 열었다면 OVERLAPPED 구조체를 반드시 지정해야 합니다.
+비동기 입출력을 사용하지 않을 경우에는 NULL 값으로 지정해야 합니다.
+```
 ***
 # LOAD FILE
 ```
